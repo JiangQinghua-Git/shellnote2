@@ -34,7 +34,10 @@ def main():
             print(file.read())
     
     if args.edit:
-        os.system(f"$EDITOR {LOG_PATH}")
+        if "EDITOR" in os.environ:
+            os.system(f"$EDITOR {LOG_PATH}")
+        else:
+            os.system(f"vim {LOG_PATH}")
 
 if __name__ == "__main__":
     main()
