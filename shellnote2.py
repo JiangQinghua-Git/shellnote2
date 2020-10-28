@@ -15,6 +15,7 @@ def main():
     ## arguments
     parser.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     parser.add_argument("-a", "--add", help="add note")
+    parser.add_argument("-p", "--print", help="print entries", action="store_true")
     
     args = parser.parse_args()
 
@@ -26,6 +27,10 @@ def main():
             file.write(entry + "\n")
         if not args.quiet:
             print(f"Added entry to {LOG_PATH}")
+    
+    if args.print:
+        with open(LOG_PATH, "r") as file:
+            print(file.read())
 
 if __name__ == "__main__":
     main()
