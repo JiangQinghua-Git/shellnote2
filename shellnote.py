@@ -11,7 +11,7 @@ def main():
     parser = argparse.ArgumentParser(description="shellnote2: easy note-taking on the command line.")
     
     ## arguments
-    parser.add_argument("--silent", help="turn off output verbosity", action="store_true")
+    parser.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     parser.add_argument("-a", "--add", help="add note")
     
     args = parser.parse_args()
@@ -20,7 +20,7 @@ def main():
         note = args.add
         with open(LOG_PATH, "a") as file:
             file.write(note + "\n")
-        if not args.silent:
+        if not args.quiet:
             print(f"Entry added: {note}")
 
 if __name__ == "__main__":
