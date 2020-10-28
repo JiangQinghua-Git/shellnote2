@@ -1,25 +1,27 @@
 #!/bin/python
 
 import argparse
+import os
+
+LOG_DIR = os.getenv("HOME") 
+LOG_FILE = "shellnote2.txt"
+LOG_PATH = LOG_DIR + "/" + LOG_FILE
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="shellnote2: easy note-taking on the command line.")
     
     ## arguments
-    parser.add_argument("-v", "--verbose", help="turn on output verbosity", action="store_true")
+    parser.add_argument("--silent", help="turn off output verbosity", action="store_true")
     parser.add_argument("-a", "--add", help="add note")
     
     args = parser.parse_args()
 
-    #if args.verbose:
-    #    print("Verbosity turned on.")
-
     if args.add:
         note = args.add
-        if args.verbose:
+        with open(LOG_PATH, "a") as file:
+            file.write(note + "\n")
+        if not args.silent:
             print(f"Entry added: {note}")
-    #with open("shellnote.txt", "a") as file:
-    #    file.write(note+"\n")
 
 if __name__ == "__main__":
     main()
