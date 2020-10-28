@@ -25,7 +25,7 @@ def main():
         with open(LOG_PATH, "a") as file:
             file.write(entry + "\n")
         if not args.quiet:
-            print(f"Entry added: {entry}")
+            print(f"Added entry to {LOG_PATH}")
 
 if __name__ == "__main__":
     main()
