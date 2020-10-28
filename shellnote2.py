@@ -16,7 +16,8 @@ def main():
     parser.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     parser.add_argument("-a", "--add", help="add note")
     parser.add_argument("-p", "--print", help="print entries", action="store_true")
-    
+    parser.add_argument("-e", "--edit", help="edit current entries in your text editor", action="store_true")
+
     args = parser.parse_args()
 
     if args.add:
@@ -31,6 +32,9 @@ def main():
     if args.print:
         with open(LOG_PATH, "r") as file:
             print(file.read())
+    
+    if args.edit:
+        os.system(f"$EDITOR {LOG_PATH}")
 
 if __name__ == "__main__":
     main()
