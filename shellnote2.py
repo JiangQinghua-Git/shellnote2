@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import argparse
+from argparse import ArgumentParser
 import os
 from time import strftime
 import re
@@ -30,18 +30,18 @@ def search_note(search_term, txt):
         print(result[i])
 
 def main():
-    parser = argparse.ArgumentParser(description="shellnote2: easy note-taking on the command line.")
+    ap = ArgumentParser(description="shellnote2: easy note-taking on the command line.")
     
     ## arguments
-    parser.add_argument("-a", "--add", help="add note", action="store")
-    parser.add_argument("-e", "--edit", help="edit current entries in your text editor", action="store_true")
-    parser.add_argument("-i", "--input", help="add note by input prompt", action="store_true")
-    parser.add_argument("-p", "--print", help="print entries", action="store_true")
-    parser.add_argument("-s", "--search", help="search entries", action="store")
-    parser.add_argument("-v", "--version", action="version", version=version_str)
-    parser.add_argument("-q", "--quiet", help="suppress output", action="store_true")
+    ap.add_argument("-a", "--add", help="add note", action="store")
+    ap.add_argument("-e", "--edit", help="edit current entries in your text editor", action="store_true")
+    ap.add_argument("-i", "--input", help="add note by input prompt", action="store_true")
+    ap.add_argument("-p", "--print", help="print entries", action="store_true")
+    ap.add_argument("-s", "--search", help="search entries", action="store")
+    ap.add_argument("-v", "--version", action="version", version=version_str)
+    ap.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     
-    args = parser.parse_args()
+    args = ap.parse_args()
 
     if args.add:
         add_note(args.add)
