@@ -3,6 +3,7 @@
 import argparse
 import os
 from time import strftime
+import re
 
 LOG_DIR = os.getenv("HOME") 
 LOG_FILE = "shellnote2.txt"
@@ -16,6 +17,17 @@ def add_note(note):
      with open(LOG_PATH, "a") as file:
          file.write(entry + "\n")
 
+def search_note(search_term, txt):
+    txt_split = txt.splitlines()
+    indexes = []
+    for i in range(len(txt_split)):
+        match = re.search(search_term, txt_split[i])
+        if match:
+            indexes.append(i)
+    result = [txt_split[i] for i in indexes]
+    for i in range(len(result)):
+        print(result[i])
+
 def main():
     parser = argparse.ArgumentParser(description="shellnote2: easy note-taking on the command line.")
     
@@ -25,7 +37,8 @@ def main():
     parser.add_argument("-p", "--print", help="print entries", action="store_true")
     parser.add_argument("-e", "--edit", help="edit current entries in your text editor", action="store_true")
     parser.add_argument("-i", "--input", help="add note by input prompt", action="store_true")
-
+    parser.add_argument("-s", "--search", help="search entries")
+    
     args = parser.parse_args()
 
     if args.add:
@@ -48,6 +61,11 @@ def main():
         add_note(note)
         if not args.quiet:
             print(f"Added entry to {LOG_PATH}")
+
+    if args.search:
+        with open(LOG_PATH, "r") as file:
+            txt = file.read()
+        search_note(args.search, txt)
 
 if __name__ == "__main__":
     main()
