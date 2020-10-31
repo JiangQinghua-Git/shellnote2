@@ -9,6 +9,7 @@ LOG_DIR = os.getenv("HOME")
 LOG_FILE = "shellnote2.txt"
 LOG_PATH = LOG_DIR + "/" + LOG_FILE
 delim = "\t"
+version_str = "0.1"
 
 def add_note(note):
      date = strftime("%Y-%m-%d")
@@ -37,7 +38,7 @@ def main():
     parser.add_argument("-i", "--input", help="add note by input prompt", action="store_true")
     parser.add_argument("-p", "--print", help="print entries", action="store_true")
     parser.add_argument("-s", "--search", help="search entries", action="store")
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1")
+    parser.add_argument("-v", "--version", action="version", version=version_str)
     parser.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     
     args = parser.parse_args()
