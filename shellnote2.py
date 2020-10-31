@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 import os
 from time import strftime
-import re
+from re import search
 
 LOG_DIR = os.getenv("HOME") 
 LOG_FILE = "shellnote2.txt"
@@ -22,7 +22,7 @@ def search_note(search_term, txt):
     txt_split = txt.splitlines()
     indexes = []
     for i in range(len(txt_split)):
-        match = re.search(search_term, txt_split[i])
+        match = search(search_term, txt_split[i])
         if match:
             indexes.append(i)
     result = [txt_split[i] for i in indexes]
