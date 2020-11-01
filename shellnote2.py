@@ -30,6 +30,10 @@ def make_yaml_entry(note):
      yaml_entry = yaml.dump(entry, sort_keys=False)
      return yaml_entry
 
+def write_entry(entry):
+    with open(logpath, "a") as file:
+        file.write(entry + "\n")
+
 def search_note(search_term, txt):
     txt_split = txt.splitlines()
     indexes = []
@@ -57,8 +61,7 @@ def main():
     
     if args.add:
         entry = make_yaml_entry(args.add)
-        with open(logpath, "a") as file:
-            file.write(entry + "\n")
+        write_entry(entry)
         if not args.quiet:
             print(f"Added entry to {logpath}")
     
@@ -76,7 +79,8 @@ def main():
     
     if args.input:
         note = input("Note: ")
-        add_note(note)
+        entry = make_yaml_entry(note)
+        write_entry(entry)
         if not args.quiet:
             print(f"Added entry to {logpath}")
 
