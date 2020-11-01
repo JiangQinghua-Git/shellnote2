@@ -1,0 +1,9 @@
+## Config file for shellnote2
+
+# logdir and logfile determine where your notes are saved, homedir defaults to /home/<user>/
+logdir = homedir
+logfile = "shellnote2.txt"
+# logpath determines w
+logpath = logdir+"/"+logfile
+# delimiter used to separate timestamp and note entries
+delim = "\t"

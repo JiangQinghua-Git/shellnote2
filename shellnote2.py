@@ -5,17 +5,25 @@ import os
 from time import strftime
 from re import search
 
-LOG_DIR = os.getenv("HOME") 
-LOG_FILE = "shellnote2.txt"
-LOG_PATH = LOG_DIR + "/" + LOG_FILE
-delim = "\t"
+homedir = os.getenv("HOME")
+configfile = ".shellnote2rc"
+configpath = homedir+"/"+configfile
+
+if os.path.exists(configpath):
+    exec(open(configpath).read())
+else:
+    logdir = homedir
+    logfile = "shellnote2.txt"
+    logpath = logdir + "/" + logfile
+    delim = "\t"
+    
 version_str = "0.1"
 
 def add_note(note):
      date = strftime("%Y-%m-%d")
      time = strftime("%H:%M")
      entry = date+delim+time+delim+note
-     with open(LOG_PATH, "a") as file:
+     with open(logpath, "a") as file:
          file.write(entry + "\n")
 
 def search_note(search_term, txt):
@@ -46,26 +54,26 @@ def main():
     if args.add:
         add_note(args.add)
         if not args.quiet:
-            print(f"Added entry to {LOG_PATH}")
+            print(f"Added entry to {logpath}")
     
     if args.edit:
         if "EDITOR" in os.environ:
-            os.system(f"$EDITOR {LOG_PATH}")
+            os.system(f"$EDITOR {logpath}")
         else:
-            os.system(f"vim {LOG_PATH}")
+            os.system(f"vim {logpath}")
     
     if args.input:
         note = input("Note: ")
         add_note(note)
         if not args.quiet:
-            print(f"Added entry to {LOG_PATH}")
+            print(f"Added entry to {logpath}")
 
     if args.print:
-        with open(LOG_PATH, "r") as file:
+        with open(logpath, "r") as file:
             print(file.read())
     
     if args.search:
-        with open(LOG_PATH, "r") as file:
+        with open(logpath, "r") as file:
             txt = file.read()
         search_note(args.search, txt)
 
