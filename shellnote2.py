@@ -67,7 +67,7 @@ def main():
     
     if args.print:
         with open(logpath, "r") as f:
-            data = yaml.load(f, Loader=yaml.FullLoader)
+            data = yaml.load(f, Loader=yaml.SafeLoader)
         for i in range(len(data)):
             print(data[i]['date'] + '\t' + data[i]['time'] + '\t' + data[i]['note'])
 
