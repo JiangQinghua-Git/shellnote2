@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import os
 from time import strftime
 from re import search
+import yaml
 
 homedir = os.getenv("HOME")
 configfile = ".shellnote2rc"
@@ -19,12 +20,15 @@ else:
     
 version_str = "0.1"
 
-def add_note(note):
-     date = strftime("%Y-%m-%d")
-     time = strftime("%H:%M")
-     entry = date+delim+time+delim+note
-     with open(logpath, "a") as file:
-         file.write(entry + "\n")
+def make_yaml_entry(note):
+     entry_date = strftime("%Y-%m-%d")
+     entry_time = strftime("%H:%M:%S")
+     entry_id = hash(entry_date+entry_time) 
+     entry_tags = None
+     entry = [{"id": entry_id, "date": entry_date, "time": entry_time, 
+         "tags": entry_tags, "note": note}]
+     yaml_entry = yaml.dump(entry, sort_keys=False)
+     return yaml_entry
 
 def search_note(search_term, txt):
     txt_split = txt.splitlines()
@@ -50,12 +54,20 @@ def main():
     ap.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     
     args = ap.parse_args()
-
+    
     if args.add:
-        add_note(args.add)
+        entry = make_yaml_entry(args.add)
+        with open(logpath, "a") as file:
+            file.write(entry + "\n")
         if not args.quiet:
             print(f"Added entry to {logpath}")
     
+    if args.print:
+        with open(logpath, "r") as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+        for i in range(len(data)):
+            print(data[i]['date'] + '\t' + data[i]['time'] + '\t' + data[i]['note'])
+
     if args.edit:
         if "EDITOR" in os.environ:
             os.system(f"$EDITOR {logpath}")
@@ -68,10 +80,6 @@ def main():
         if not args.quiet:
             print(f"Added entry to {logpath}")
 
-    if args.print:
-        with open(logpath, "r") as file:
-            print(file.read())
-    
     if args.search:
         with open(logpath, "r") as file:
             txt = file.read()
