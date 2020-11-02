@@ -18,6 +18,16 @@ curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
 curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_WHITE)
 
+# function to print center logo
+def get_logo_coords(n_row, n_col, msg):
+    center_row = int(n_row/10)
+    center_col = int(n_col/2)
+    half_len_of_msg = int(len(msg)/2)
+    x_pos = center_col - half_len_of_msg
+    y_pos = center_row
+    return x_pos, y_pos
+
+
 # BEGIN PROGRAM
 # add top line
 stdscr.addstr("shellnote", curses.A_REVERSE)
@@ -33,6 +43,20 @@ main_window = curses.newwin(curses.LINES-2, curses.COLS, 1, 0)
 text_window = main_window.subwin(curses.LINES-6, curses.COLS-4, 3, 2)
 # draw border around main window
 main_window.box()
+
+# get window size
+n_row, n_col = main_window.getmaxyx()
+
+logo = ["         __         ____            __     ",
+"   _____/ /_  ___  / / /___  ____  / /____ ",
+"  / ___/ __ \\/ _ \\/ / / __ \\/ __ \\/ __/ _ \\",
+" (__  ) / / /  __/ / / / / / /_/ / /_/  __/",
+"/____/_/ /_/\\___/_/_/_/ /_/\\____/\\__/\\___/ "]
+
+# draw logo
+for i in range(len(logo)):
+    x_pos, y_pos = get_logo_coords(n_row, n_col, logo[i])
+    main_window.addstr(y_pos+i, x_pos, logo[i])
 
 # update windows
 stdscr.noutrefresh()
