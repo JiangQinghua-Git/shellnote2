@@ -47,11 +47,13 @@ main_window.box()
 # get window size
 n_row, n_col = main_window.getmaxyx()
 
-logo = ["         __         ____            __     ",
+logo = [
+"         __         ____            __     ",
 "   _____/ /_  ___  / / /___  ____  / /____ ",
 "  / ___/ __ \\/ _ \\/ / / __ \\/ __ \\/ __/ _ \\",
 " (__  ) / / /  __/ / / / / / /_/ / /_/  __/",
-"/____/_/ /_/\\___/_/_/_/ /_/\\____/\\__/\\___/ "]
+"/____/_/ /_/\\___/_/_/_/ /_/\\____/\\__/\\___/ ",
+"$ Easy note-taking on the command line.  "]
 
 # draw logo
 for i in range(len(logo)):
