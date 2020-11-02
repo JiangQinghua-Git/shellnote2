@@ -46,6 +46,17 @@ def search_note(search_term, txt):
     for i in range(len(result)):
         print(result[i])
 
+def launch_editor():
+    editor = os.environ.get("EDITOR")
+    if editor is None:
+        if "linux" in sys.platform:
+            editor = "vi"
+        elif sys.platform == "darwin":
+            editor = "nano"
+        elif sys.platorm == "win32":
+            editor = "notepad.exe"
+    os.system(editor + " " + logpath)
+
 def main():
     ap = argparse.ArgumentParser(prog="shellnote2",
             description="shellnote2: easy note-taking on the command line.")
@@ -81,10 +92,7 @@ def main():
                     '\t' + data[i]['note'])
 
     if args.edit:
-        if "EDITOR" in os.environ:
-            os.system(f"$EDITOR {logpath}")
-        else:
-            os.system(f"vim {logpath}")
+        launch_editor()
     
     if args.input:
         note = input("Note: ")
