@@ -46,14 +46,14 @@ def search_note(search_term, txt):
         print(result[i])
 
 def main():
-    ap = ArgumentParser(description="shellnote2: easy note-taking on the command line.")
+    ap = ArgumentParser(prog="shellnote2", description="shellnote2: easy note-taking on the command line.")
     
     ## arguments
-    ap.add_argument("-a", "--add", help="add note", action="store")
+    ap.add_argument("-a", "--add", help="add note", action="store", metavar="NOTE")
     ap.add_argument("-e", "--edit", help="edit current entries in your text editor", action="store_true")
     ap.add_argument("-i", "--input", help="add note by input prompt", action="store_true")
     ap.add_argument("-p", "--print", help="print entries", action="store_true")
-    ap.add_argument("-s", "--search", help="search entries", action="store")
+    ap.add_argument("-s", "--search", help="search entries", action="store", metavar="TERM")
     ap.add_argument("-v", "--version", action="version", version=version_str)
     ap.add_argument("-q", "--quiet", help="suppress output", action="store_true")
     
@@ -69,7 +69,7 @@ def main():
         with open(logpath, "r") as f:
             data = yaml.load(f, Loader=yaml.SafeLoader)
         for i in range(len(data)):
-            print(data[i]['date'] + '\t' + data[i]['time'] + '\t' + data[i]['note'])
+            print(data[i]['date'] + " " + data[i]['time'][0:5] + '\t' + data[i]['note'])
 
     if args.edit:
         if "EDITOR" in os.environ:
