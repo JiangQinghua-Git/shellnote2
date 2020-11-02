@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-from argparse import ArgumentParser
+import argparse
 import os
+import sys
 from time import strftime
 from re import search
 import yaml
@@ -46,7 +47,7 @@ def search_note(search_term, txt):
         print(result[i])
 
 def main():
-    ap = ArgumentParser(prog="shellnote2",
+    ap = argparse.ArgumentParser(prog="shellnote2",
             description="shellnote2: easy note-taking on the command line.")
     
     ## arguments
@@ -65,7 +66,7 @@ def main():
             action="store_true")
     
     args = ap.parse_args()
-    
+
     if args.add:
         entry = make_yaml_entry(args.add)
         write_entry(entry)
@@ -96,6 +97,10 @@ def main():
         with open(logpath, "r") as file:
             txt = file.read()
         search_note(args.search, txt)
+    
+    # if no arguments provided, launch curses tui
+    if not any(vars(args).values()):
+        exec(open("shellnote2-tui.py").read())
 
 if __name__ == "__main__":
     main()
