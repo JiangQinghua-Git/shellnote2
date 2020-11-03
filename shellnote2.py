@@ -10,6 +10,7 @@ import yaml
 homedir = os.getenv("HOME")
 configfile = ".shellnote2rc"
 configpath = homedir+"/"+configfile
+version_str = "0.1"
 
 if os.path.exists(configpath):
     exec(open(configpath).read())
@@ -18,20 +19,15 @@ else:
     logfile = "shellnote2.txt"
     logpath = logdir + "/" + logfile
     delim = "\t"
-    
-version_str = "0.1"
 
-def make_yaml_entry(note):
-     entry_date = strftime("%Y-%m-%d")
-     entry_time = strftime("%H:%M:%S")
-     entry_id = hash(entry_date+entry_time) 
-     entry_tags = None
-     entry = [{"id": entry_id, "date": entry_date, "time": entry_time, 
-         "tags": entry_tags, "note": note}]
-     yaml_entry = yaml.dump(entry, sort_keys=False)
-     return yaml_entry
-
-def write_entry(entry):
+def add_note(text):
+    entry_date = strftime("%Y-%m-%d")
+    entry_time = strftime("%H:%M:%S")
+    entry_id = hash(entry_date+entry_time) 
+    entry_tags = None
+    entry = [{"id": entry_id, "date": entry_date, "time": entry_time, 
+         "tags": entry_tags, "note": text}]
+    entry = yaml.dump(entry, sort_keys=False) # make yaml format
     with open(logpath, "a") as file:
         file.write(entry + "\n")
 
@@ -58,8 +54,8 @@ def launch_editor():
     os.system(editor + " " + logpath)
 
 def main():
-    ap = argparse.ArgumentParser(prog="shellnote2",
-            description="shellnote2: easy note-taking on the command line.")
+    ap = argparse.ArgumentParser(prog="shellnote",
+            description="shellnote: easy note-taking on the command line.")
     
     ## arguments
     ap.add_argument("-a", "--add", help="add note", action="store",
@@ -79,8 +75,9 @@ def main():
     args = ap.parse_args()
 
     if args.add:
-        entry = make_yaml_entry(args.add)
-        write_entry(entry)
+        #entry = make_yaml_entry(args.add)
+        #write_entry(entry)
+        add_note(args.add)
         if not args.quiet:
             print(f"Added entry to {logpath}")
     
