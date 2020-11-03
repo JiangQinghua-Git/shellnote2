@@ -20,7 +20,7 @@ else:
     logpath = os.path.join(logdir, logfile)
     delim = "\t"
 
-def add_note(text):
+def add_note(text, quiet=True):
     entry_date = strftime("%Y-%m-%d")
     entry_time = strftime("%H:%M:%S")
     entry_id = hash(entry_date+entry_time) 
@@ -30,6 +30,8 @@ def add_note(text):
     entry = yaml.dump(entry, sort_keys=False) # make yaml format
     with open(logpath, "a") as file:
         file.write(entry + "\n")
+    if quiet:
+        print(f"Added entry to {logpath}")
 
 def search_note(search_term, txt):
     txt_split = txt.splitlines()
@@ -70,16 +72,12 @@ def main():
             metavar="TERM")
     ap.add_argument("-v", "--version", action="version", version=version_str)
     ap.add_argument("-q", "--quiet", help="suppress output", 
-            action="store_true")
+            action="store_false")
     
     args = ap.parse_args()
 
     if args.add:
-        #entry = make_yaml_entry(args.add)
-        #write_entry(entry)
-        add_note(args.add)
-        if not args.quiet:
-            print(f"Added entry to {logpath}")
+        add_note(args.add, args.quiet)
     
     if args.print:
         with open(logpath, "r") as f:
@@ -95,7 +93,7 @@ def main():
         note = input("Note: ")
         entry = make_yaml_entry(note)
         write_entry(entry)
-        if not args.quiet:
+        if args.quiet:
             print(f"Added entry to {logpath}")
 
     if args.search:
