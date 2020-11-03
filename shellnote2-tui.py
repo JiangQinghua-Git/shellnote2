@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import curses
+import pdb
 
 # initialize standard screen
 stdscr = curses.initscr()
@@ -18,15 +19,13 @@ curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
 curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_WHITE)
 
-# function to print center logo
-def get_logo_coords(n_row, n_col, msg):
-    center_row = int(n_row/10)
-    center_col = int(n_col/2)
-    half_len_of_msg = int(len(msg)/2)
-    x_pos = center_col - half_len_of_msg
-    y_pos = center_row
-    return x_pos, y_pos
-
+# function to get center of window wrt string length 
+def get_window_center(y, x, d):
+    y_center = int(y/2)
+    x_center = int(x/2)
+    half_len_of_d = int(d/2)
+    x = x_center - half_len_of_d
+    return y, x
 
 # BEGIN PROGRAM
 # add top line
@@ -36,14 +35,14 @@ stdscr.chgat(-1, curses.A_REVERSE)
 # add bottom menu
 stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit")
 
-# add main window
-main_window = curses.newwin(curses.LINES-2, curses.COLS, 1, 0)
+# get terminal size
+Y, X = stdscr.getmaxyx()
 
-# add window within the main window
-text_window = main_window.subwin(curses.LINES-6, curses.COLS-4, 3, 2)
+# add main window
+#main_window = curses.newwin(curses.LINES-2, curses.COLS, 1, 0)
+main_window = curses.newwin(Y-2, X, 1, 0)
 # draw border around main window
 main_window.box()
-
 # get window size
 n_row, n_col = main_window.getmaxyx()
 
@@ -57,8 +56,23 @@ logo = [
 
 # draw logo
 for i in range(len(logo)):
-    x_pos, y_pos = get_logo_coords(n_row, n_col, logo[i])
-    main_window.addstr(y_pos+i, x_pos, logo[i])
+    y, x = get_window_center(Y, X, len(logo[i]))
+    main_window.addstr(1+i, x, logo[i])
+
+y_menu = i + 4 # y coord where menu begins
+h_menu = 6 
+w_menu = 20
+# add menu window within the main window
+y, x = get_window_center(Y, X, w_menu)
+menu_window = main_window.subwin(
+        h_menu, w_menu, 
+        y_menu, x)
+menu_window.box()
+menu_window.addstr(1, 2, ">")
+menu_window.addstr(1, 4, "Add note")
+menu_window.addstr(1+1, 4, "Edit notes")
+menu_window.addstr(1+2, 4, "Browse notes")
+menu_window.addstr(1+3, 4, "About")
 
 # update windows
 stdscr.noutrefresh()
