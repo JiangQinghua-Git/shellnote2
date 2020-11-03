@@ -8,15 +8,15 @@ from re import search
 import yaml
 
 homedir = os.getenv("HOME")
-configfile = ".shellnote2rc"
-configpath = homedir+"/"+configfile
+configfile = "config.py"
+configpath = homedir+"/"+".config"+"/"+"shellnote"+"/"+configfile
 version_str = "0.1"
 
 if os.path.exists(configpath):
     exec(open(configpath).read())
 else:
     logdir = homedir
-    logfile = "shellnote2.txt"
+    logfile = "shellnote.txt"
     logpath = logdir + "/" + logfile
     delim = "\t"
 
@@ -105,7 +105,7 @@ def main():
     
     # if no arguments provided, launch curses tui
     if not any(vars(args).values()):
-        exec(open("shellnote2-tui.py").read())
+        exec(open("shellnote-tui.py").read())
 
 if __name__ == "__main__":
     main()

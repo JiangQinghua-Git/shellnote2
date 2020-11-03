@@ -19,7 +19,7 @@ curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
 curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_WHITE)
 
-# function to get center of window wrt string length 
+# function to get center of window wrt a length d
 def get_window_center(y, x, d):
     y_center = int(y/2)
     x_center = int(x/2)
@@ -33,7 +33,7 @@ stdscr.addstr("shellnote", curses.A_REVERSE)
 stdscr.chgat(-1, curses.A_REVERSE)
 
 # add bottom menu
-stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit")
+stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit.")
 
 # get terminal size
 Y, X = stdscr.getmaxyx()
@@ -72,7 +72,7 @@ menu_window.addstr(1, 2, ">")
 menu_window.addstr(1, 4, "Add note")
 menu_window.addstr(1+1, 4, "Edit notes")
 menu_window.addstr(1+2, 4, "Browse notes")
-menu_window.addstr(1+3, 4, "About")
+menu_window.addstr(1+3, 4, "Help")
 
 # update windows
 stdscr.noutrefresh()
