@@ -7,9 +7,9 @@ from time import strftime
 from re import search
 import yaml
 
-homedir = os.getenv("HOME")
+homedir = os.path.expanduser("~")
 configfile = "config.py"
-configpath = homedir+"/"+".config"+"/"+"shellnote"+"/"+configfile
+configpath = os.path.join(homedir, ".config", "shellnote", configfile)
 version_str = "0.1"
 
 if os.path.exists(configpath):
@@ -17,7 +17,7 @@ if os.path.exists(configpath):
 else:
     logdir = homedir
     logfile = "shellnote.txt"
-    logpath = logdir + "/" + logfile
+    logpath = os.path.join(logdir, logfile)
     delim = "\t"
 
 def add_note(text):
