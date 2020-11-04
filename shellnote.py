@@ -190,9 +190,13 @@ class TUI:
             if c == ord('q') or c == ord('Q'):
                 self.shutdown()
             elif c == ord('j') or c == ord('J'):
-                self.menu_choice += 1
+                if self.menu_choice < len(self.menu_items):
+                    self.menu_choice += 1
+            elif c == ord('k') or c == ord('K'):
+                if self.menu_choice > 1:
+                    self.menu_choice -= 1
             elif c == ord('h') or c == ord('H'): 
-                self.stdscr.addstr("HELP ME! ")
+                self.stdscr.addstr(" HELP ME!")
         
             # refresh windows from bottom up (avoids flickering)
             self.stdscr.noutrefresh()
