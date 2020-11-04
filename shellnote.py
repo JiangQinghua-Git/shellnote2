@@ -140,7 +140,60 @@ class TUI:
         #self.draw_menu_items()
         self.event_loop()
 
+    # event loop
+    def event_loop(self):
+        self.menu_choice = 1
+        while True:
+            self.draw_menu_items()
+            
+            c = self.menu_window.getch() # wait for input
+            
+            # menu navigation
+            if c == ord('q') or c == ord('Q'):
+                self.shutdown()
+            elif c == ord('j') or c == ord('J'):
+                if self.menu_choice < len(self.menu_items):
+                    self.menu_choice += 1
+            elif c == ord('k') or c == ord('K'):
+                if self.menu_choice > 1:
+                    self.menu_choice -= 1
+            elif c == ord('h') or c == ord('H'): 
+                self.stdscr.addstr(" HELP ME!")
+        
+            # refresh windows from bottom up (avoids flickering)
+            self.stdscr.noutrefresh()
+            curses.doupdate()
 
+        self.shutdown()
+
+    def draw_menu_window(self, y_start):
+        y_menu = y_start + 4 # y coord where menu begins
+        menu_height = 6 
+        menu_width = 20
+        # add menu window within the main window
+        y, x = self.get_window_center(self.Y, self.X, menu_width)
+        self.menu_window = curses.newwin(
+                menu_height, menu_width, 
+                y_menu, x)
+        self.menu_window.box()
+        # update windows
+        self.menu_window.noutrefresh()
+        # redraw the screen
+        curses.doupdate()
+
+    def draw_menu_items(self):
+        self.menu_items = ["Add note", "Edit notes", "Browse notes", "Help"]
+        menu_pad = 2 
+        for i, item in enumerate(self.menu_items, 1):
+            if i == self.menu_choice:
+                self.menu_window.addstr(i, menu_pad, "> %s" % item)
+            else:
+                self.menu_window.addstr(i, menu_pad, "  %s" % item)
+        # update windows
+        self.menu_window.noutrefresh()
+        # redraw the screen
+        curses.doupdate()
+    
     def draw_main_window(self):
         # add top line
         self.stdscr.addstr("shellnote", curses.A_REVERSE)
@@ -179,30 +232,6 @@ class TUI:
             self.main_window.addstr(1+i, x, logo[i])
         return i # return bottom y pos
 
-    # event loop
-    def event_loop(self):
-        self.menu_choice = 1
-        while True:
-            self.draw_menu_items()
-            
-            c = self.menu_window.getch() # wait for input
-        
-            if c == ord('q') or c == ord('Q'):
-                self.shutdown()
-            elif c == ord('j') or c == ord('J'):
-                if self.menu_choice < len(self.menu_items):
-                    self.menu_choice += 1
-            elif c == ord('k') or c == ord('K'):
-                if self.menu_choice > 1:
-                    self.menu_choice -= 1
-            elif c == ord('h') or c == ord('H'): 
-                self.stdscr.addstr(" HELP ME!")
-        
-            # refresh windows from bottom up (avoids flickering)
-            self.stdscr.noutrefresh()
-            curses.doupdate()
-        self.shutdown()
-        
     # function to get center of window wrt a length d
     def get_window_center(self, y, x, d):
         y_center = int(y/2)
@@ -211,34 +240,6 @@ class TUI:
         x = x_center - half_len_of_d
         return y, x
 
-    def draw_menu_window(self, y_start):
-        y_menu = y_start + 4 # y coord where menu begins
-        menu_height = 6 
-        menu_width = 20
-        # add menu window within the main window
-        y, x = self.get_window_center(self.Y, self.X, menu_width)
-        self.menu_window = curses.newwin(
-                menu_height, menu_width, 
-                y_menu, x)
-        self.menu_window.box()
-        # update windows
-        self.menu_window.noutrefresh()
-        # redraw the screen
-        curses.doupdate()
-
-    def draw_menu_items(self):
-        self.menu_items = ["Add note", "Edit notes", "Browse notes", "Help"]
-        menu_pad = 2 
-        for i, item in enumerate(self.menu_items, 1):
-            if i == self.menu_choice:
-                self.menu_window.addstr(i, menu_pad, "> %s" % item)
-            else:
-                self.menu_window.addstr(i, menu_pad, "  %s" % item)
-        # update windows
-        self.menu_window.noutrefresh()
-        # redraw the screen
-        curses.doupdate()
-    
     def kill_curses(self):
         # restore terminal settings and quit
         curses.nocbreak()
