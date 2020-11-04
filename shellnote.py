@@ -213,11 +213,14 @@ class TUI:
                 h_menu, w_menu, 
                 y_menu, x)
         menu_window.box()
-        menu_window.addstr(1, 2, ">")
-        menu_window.addstr(1, 4, "Add note")
-        menu_window.addstr(1+1, 4, "Edit notes")
-        menu_window.addstr(1+2, 4, "Browse notes")
-        menu_window.addstr(1+3, 4, "Help")
+        self.menu_items = ["Add note", "Edit notes", "Browse notes", "Help"]
+        menu_pad = 2 
+        self.menu_choice = 1
+        for i, item in enumerate(self.menu_items, 1):
+            if i == self.menu_choice:
+                menu_window.addstr(i, menu_pad, "> %s" % item)
+            else:
+                menu_window.addstr(i, menu_pad, "  %s" % item)
         menu_window.noutrefresh()
     
     def kill_curses(self):
