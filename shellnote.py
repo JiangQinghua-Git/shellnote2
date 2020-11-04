@@ -7,6 +7,7 @@ from time import strftime
 from re import search
 import yaml
 import curses
+from signal import signal, SIGINT, SIGTERM
 
 homedir = os.path.expanduser("~")
 configfile = "config.py"
@@ -57,6 +58,7 @@ def launch_editor():
     os.system(editor + " " + logpath)
 
 class CLI:
+
     def __init__(self):
         ap = argparse.ArgumentParser(prog="shellnote",
                 description="shellnote: easy note-taking on the command line.")
@@ -102,12 +104,18 @@ class CLI:
         # if no arguments provided, launch curses tui
         if not any(vars(args).values()):
             tui = TUI()
-        #    exec(open("shellnote-tui.py").read())
+
 
 class TUI:
+    
     def __init__(self):
+
+        # tell curses to shutdown gracefully at terminal kill signal
+        signal(SIGINT, self.shutdown)
+        signal(SIGTERM, self.shutdown)
+
         # initialize standard screen
-        stdscr = curses.initscr()
+        self.stdscr = curses.initscr()
         # disable echo, character break and cursor
         curses.noecho()
         curses.cbreak()
@@ -122,33 +130,42 @@ class TUI:
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
         curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_WHITE)
         
-        # function to get center of window wrt a length d
-        def get_window_center(y, x, d):
-            y_center = int(y/2)
-            x_center = int(x/2)
-            half_len_of_d = int(d/2)
-            x = x_center - half_len_of_d
-            return y, x
+        # get terminal size
+        self.Y, self.X = self.stdscr.getmaxyx()
         
         # BEGIN PROGRAM
+        self.draw_main_window()
+        #self.draw_menu()
+        self.event_loop()
+
+
+    def draw_main_window(self):
         # add top line
-        stdscr.addstr("shellnote", curses.A_REVERSE)
-        stdscr.chgat(-1, curses.A_REVERSE)
+        self.stdscr.addstr("shellnote", curses.A_REVERSE)
+        self.stdscr.chgat(-1, curses.A_REVERSE)
         
         # add bottom menu
-        stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit.")
-        
-        # get terminal size
-        Y, X = stdscr.getmaxyx()
+        self.stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit.")
         
         # add main window
-        #main_window = curses.newwin(curses.LINES-2, curses.COLS, 1, 0)
-        main_window = curses.newwin(Y-2, X, 1, 0)
+        self.main_window = curses.newwin(self.Y-2, self.X, 1, 0)
         # draw border around main window
-        main_window.box()
-        # get window size
-        n_row, n_col = main_window.getmaxyx()
+        self.main_window.box()
         
+        # draw logo
+        y_logo = self.draw_logo()
+
+        # update windows
+        self.stdscr.noutrefresh()
+        self.main_window.noutrefresh()
+
+        # draw menu starting at bottom y pos of logo
+        self.draw_menu(y_logo)
+        
+        # redraw the screen
+        curses.doupdate()
+    
+    def draw_logo(self):    
         logo = [
         "         __         ____            __     ",
         "   _____/ /_  ___  / / /___  ____  / /____ ",
@@ -159,15 +176,40 @@ class TUI:
         
         # draw logo
         for i in range(len(logo)):
-            y, x = get_window_center(Y, X, len(logo[i]))
-            main_window.addstr(1+i, x, logo[i])
+            y, x = self.get_window_center(self.Y, self.X, len(logo[i]))
+            self.main_window.addstr(1+i, x, logo[i])
+        return i # return bottom y pos
+
+    # event loop
+    def event_loop(self):
+        while True:
+            c = self.stdscr.getch() # wait for input
         
-        y_menu = i + 4 # y coord where menu begins
+            if c == ord('q') or c == ord('Q'):
+                self.shutdown()
+            if c == ord('h') or c == ord('H'): 
+                self.stdscr.addstr("HELP ME! ")
+        
+            # refresh windows from bottom up (avoids flickering)
+            self.stdscr.noutrefresh()
+            curses.doupdate()
+        self.shutdown()
+        
+    # function to get center of window wrt a length d
+    def get_window_center(self, y, x, d):
+        y_center = int(y/2)
+        x_center = int(x/2)
+        half_len_of_d = int(d/2)
+        x = x_center - half_len_of_d
+        return y, x
+
+    def draw_menu(self, y_start):
+        y_menu = y_start + 4 # y coord where menu begins
         h_menu = 6 
         w_menu = 20
         # add menu window within the main window
-        y, x = get_window_center(Y, X, w_menu)
-        menu_window = main_window.subwin(
+        y, x = self.get_window_center(self.Y, self.X, w_menu)
+        menu_window = curses.newwin(
                 h_menu, w_menu, 
                 y_menu, x)
         menu_window.box()
@@ -176,35 +218,22 @@ class TUI:
         menu_window.addstr(1+1, 4, "Edit notes")
         menu_window.addstr(1+2, 4, "Browse notes")
         menu_window.addstr(1+3, 4, "Help")
-        
-        # update windows
-        stdscr.noutrefresh()
-        main_window.noutrefresh()
-        
-        # redraw the screen
-        curses.doupdate()
-        
-        # event loop
-        while True:
-            c = main_window.getch()
-        
-            if c == ord('q') or c == ord('Q'):
-                break
-        
-            # refresh windows from bottom up (avoids flickering)
-            stdscr.noutrefresh()
-            main_window.noutrefresh()
-            text_window.noutrefresh()
-            curses.doupdate()
-        
-        # restore terminal settings
+        menu_window.noutrefresh()
+    
+    def kill_curses(self):
+        # restore terminal settings and quit
         curses.nocbreak()
         curses.echo()
         curses.curs_set(1)
-        
-        # end program
         curses.endwin()
 
+    def shutdown(self, arg1=None, arg2=None):
+        # signal() sends two args, so we need two dummy args
+        self.kill_curses()
+        sys.exit(0)
+
+
+    
 def main():
     cli = CLI()
 
