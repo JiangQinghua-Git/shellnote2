@@ -186,7 +186,7 @@ class TUI:
         menu_pad = 2 
         for i, item in enumerate(self.menu_items, 1):
             if i == self.menu_choice:
-                self.menu_window.addstr(i, menu_pad, "> %s" % item)
+                self.menu_window.addstr(i, menu_pad, "> %s" % item, curses.A_BOLD)
             else:
                 self.menu_window.addstr(i, menu_pad, "  %s" % item)
         # update windows
