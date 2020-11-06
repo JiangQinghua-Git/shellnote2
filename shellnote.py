@@ -7,7 +7,6 @@ from time import strftime
 from re import search
 import yaml
 import curses
-import curses.ascii
 from signal import signal, SIGINT, SIGTERM
 
 homedir = os.path.expanduser("~")
@@ -141,12 +140,14 @@ class TUI:
                 "Add note":1, 
                 "Edit notes":1, 
                 "Browse notes":1,
+                "Change config":1,
                 "Help":1, 
                 "Quit":1}
         #self.menu_funcs = [add_note, edit_note, browse_notes, self.draw_help_window] 
         self.menu_funcs = [self.add_note_tui, 
                 self.launch_editor_tui, 
-                self.browse_notes, 
+                self.browse_notes,
+                self.change_config,
                 self.draw_help_window, 
                 self.shutdown] 
 
@@ -168,6 +169,9 @@ class TUI:
         self.draw_dummy_window()
 
     def browse_notes(self):
+        self.draw_dummy_window()
+
+    def change_config(self):
         self.draw_dummy_window()
 
     def draw_all(self):
