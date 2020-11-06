@@ -172,7 +172,7 @@ class TUI:
         self.shutdown()
 
     def draw_help_window(self):
-        width = 60
+        width = int(0.6*self.X)
         y, x = self.get_window_center(self.Y, self.X, width)
         self.help_window = curses.newwin(12, width,
                 self.y_logo+4, x) 
