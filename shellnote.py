@@ -144,7 +144,8 @@ class TUI:
                 "Help":1, 
                 "Quit":1}
         #self.menu_funcs = [add_note, edit_note, browse_notes, self.draw_help_window] 
-        self.menu_funcs = [self.add_note_tui, 
+        self.menu_funcs = [
+                self.add_note_tui, 
                 self.launch_editor_tui, 
                 self.browse_notes,
                 self.change_config,
@@ -188,20 +189,30 @@ class TUI:
             c = self.menu_window.getch() # wait for input
             
             # menu navigation
-            if c == ord('q') or c == ord('Q'):
-                self.shutdown()
-            elif c == ord('j') or c == ord('J'):
+            if c == ord('j') or c == ord('J'):
                 if self.menu_choice < len(self.menu_items):
                     self.menu_choice += 1
             elif c == ord('k') or c == ord('K'):
                 if self.menu_choice > 1:
                     self.menu_choice -= 1
-            elif c == ord('h') or c == ord('H'): 
-                self.draw_help_window()
-            if c == curses.KEY_ENTER or c == 10 or c == 13:
+            elif c == ord('l') or c == curses.KEY_ENTER or c == 10 or c == 13:
                 # KEY_ENTER may not work, so check for ascii newline (\n; 10) 
                 # and carriage return (\r; 13)
                 self.launch_menu_choice(self.menu_choice)
+
+            # menu keyboard shortcuts
+            elif c == ord('a') or c == ord('A'):
+                self.add_note_tui()
+            elif c == ord('e') or c == ord('E'):
+                self.launch_editor_tui()
+            elif c == ord('b') or c == ord('B'):
+                self.browse_notes()
+            elif c == ord('c') or c == ord('C'):
+                self.change_config()
+            elif c == ord('h') or c == ord('H'): 
+                self.draw_help_window()
+            elif c == ord('q') or c == ord('Q'):
+                self.shutdown()
 
             # refresh windows from bottom up (avoids flickering)
             self.stdscr.noutrefresh()
