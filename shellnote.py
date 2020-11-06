@@ -7,6 +7,7 @@ from time import strftime
 from re import search
 import yaml
 import curses
+import curses.ascii
 from signal import signal, SIGINT, SIGTERM
 
 homedir = os.path.expanduser("~")
@@ -133,12 +134,41 @@ class TUI:
         # get terminal size
         self.Y, self.X = self.stdscr.getmaxyx()
         
+        # define menu items
+        # the key in the dict is the text of the menu item that appears
+        # the value is the character to be underlined
+        self.menu_items = {
+                "Add note":1, 
+                "Edit notes":1, 
+                "Browse notes":1,
+                "Help":1, 
+                "Quit":1}
+        #self.menu_funcs = [add_note, edit_note, browse_notes, self.draw_help_window] 
+        self.menu_funcs = [self.add_note_tui, 
+                self.launch_editor_tui, 
+                self.browse_notes, 
+                self.draw_help_window, 
+                self.shutdown] 
+
         # BEGIN PROGRAM
         #self.draw_main_window()
         # draw menu starting at bottom y pos of logo
         #self.draw_menu_window(self.y_logo)
         #self.draw_menu_items()
         self.event_loop()
+
+
+    def launch_editor_tui(self):
+        launch_editor()
+        #self.stdscr.noutrefresh()
+        #curses.doupdate()
+        self.shutdown()
+
+    def add_note_tui(self):
+        self.draw_dummy_window()
+
+    def browse_notes(self):
+        self.draw_dummy_window()
 
     def draw_all(self):
         self.draw_main_window()
@@ -164,12 +194,21 @@ class TUI:
                     self.menu_choice -= 1
             elif c == ord('h') or c == ord('H'): 
                 self.draw_help_window()
+            if c == curses.KEY_ENTER or c == 10 or c == 13:
+                # KEY_ENTER may not work, so check for ascii newline (\n; 10) 
+                # and carriage return (\r; 13)
+                self.launch_menu_choice(self.menu_choice)
 
             # refresh windows from bottom up (avoids flickering)
             self.stdscr.noutrefresh()
             curses.doupdate()
 
         self.shutdown()
+
+    def launch_menu_choice(self, choice):
+        self.menu_funcs[choice-1]()
+
+        
 
     def draw_help_window(self):
         height = 12
@@ -185,9 +224,24 @@ class TUI:
         self.help_window.getch() # wait for any key press
         self.stdscr.clear()
     
+    def draw_dummy_window(self):
+        height = 12
+        width = int(0.6*self.X)
+        y, x = self.get_window_center(self.Y, self.X, width)
+        self.help_window = curses.newwin(height, width,
+                self.y_logo-2, x) 
+        help_text = "Coming soon..." 
+        self.help_window.addstr(1, 3, help_text) 
+        self.help_window.box()
+        self.help_window.noutrefresh()
+        curses.doupdate()
+        self.help_window.getch() # wait for any key press
+        self.stdscr.clear()
+    
     def draw_menu_window(self, y_start):
-        y_menu = y_start + 4 # y coord where menu begins
-        menu_height = 6 
+        line_pad = 3 # lines to pad after logo
+        y_menu = y_start + line_pad # y coord where menu begins
+        menu_height = len(self.menu_items) + 2 
         menu_width = 20
         # add menu window within the main window
         y, x = self.get_window_center(self.Y, self.X, menu_width)
@@ -201,12 +255,10 @@ class TUI:
         curses.doupdate()
 
     def draw_menu_items(self):
-        # the key in the dict is the text of the menu item that appears
-        # the value is the character to be underlined
-        self.menu_items = {"Add note":1, "Edit notes":1, "Browse notes":1, "Help":1}
         menu_pad = 2 # padding columns 
         for i, (key, value) in enumerate(self.menu_items.items(), 1):
             if i == self.menu_choice:
+                # highlight menu choice and underline keybind
                 self.menu_window.addstr(i, menu_pad, "%s" % key, curses.A_STANDOUT)
                 self.menu_window.chgat(i, value+1, 1, curses.A_UNDERLINE | curses.A_STANDOUT)
             else:
