@@ -134,18 +134,23 @@ class TUI:
         self.Y, self.X = self.stdscr.getmaxyx()
         
         # BEGIN PROGRAM
-        self.draw_main_window()
+        #self.draw_main_window()
         # draw menu starting at bottom y pos of logo
-        self.draw_menu_window(self.y_logo)
+        #self.draw_menu_window(self.y_logo)
         #self.draw_menu_items()
         self.event_loop()
+
+    def draw_all(self):
+        self.draw_main_window()
+        self.draw_menu_window(self.y_logo)
+        self.draw_menu_items()
 
     # event loop
     def event_loop(self):
         self.menu_choice = 1
         while True:
-            self.draw_menu_items()
-            
+            self.draw_all()
+
             c = self.menu_window.getch() # wait for input
             
             # menu navigation
@@ -158,14 +163,27 @@ class TUI:
                 if self.menu_choice > 1:
                     self.menu_choice -= 1
             elif c == ord('h') or c == ord('H'): 
-                self.stdscr.addstr(" HELP ME!")
-        
+                self.draw_help_window()
+
             # refresh windows from bottom up (avoids flickering)
             self.stdscr.noutrefresh()
             curses.doupdate()
 
         self.shutdown()
 
+    def draw_help_window(self):
+        width = 60
+        y, x = self.get_window_center(self.Y, self.X, width)
+        self.help_window = curses.newwin(12, width,
+                self.y_logo+4, x) 
+        help_text = "This is a helpful text." 
+        self.help_window.addstr(1, 3, help_text) 
+        self.help_window.box()
+        self.help_window.noutrefresh()
+        curses.doupdate()
+        self.help_window.getch() # wait for any key press
+        self.stdscr.clear()
+    
     def draw_menu_window(self, y_start):
         y_menu = y_start + 4 # y coord where menu begins
         menu_height = 6 
@@ -196,14 +214,14 @@ class TUI:
     
     def draw_main_window(self):
         # add top line
-        self.stdscr.addstr("shellnote", curses.A_REVERSE)
-        self.stdscr.chgat(-1, curses.A_REVERSE)
+        #self.stdscr.addstr("shellnote", curses.A_REVERSE)
+        #self.stdscr.chgat(-1, curses.A_REVERSE)
         
         # add bottom menu
         self.stdscr.addstr(curses.LINES-1, 0, "Press 'q' to quit.")
         
         # add main window
-        self.main_window = curses.newwin(self.Y-2, self.X, 1, 0)
+        self.main_window = curses.newwin(self.Y-1, self.X, 0, 0)
         # draw border around main window
         self.main_window.box()
         
@@ -253,7 +271,6 @@ class TUI:
         sys.exit(0)
 
 
-    
 def main():
     cli = CLI()
 
