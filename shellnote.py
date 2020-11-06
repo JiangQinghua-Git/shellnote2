@@ -172,10 +172,11 @@ class TUI:
         self.shutdown()
 
     def draw_help_window(self):
+        height = 12
         width = int(0.6*self.X)
         y, x = self.get_window_center(self.Y, self.X, width)
-        self.help_window = curses.newwin(12, width,
-                self.y_logo+4, x) 
+        self.help_window = curses.newwin(height, width,
+                self.y_logo-2, x) 
         help_text = "This is a helpful text." 
         self.help_window.addstr(1, 3, help_text) 
         self.help_window.box()
@@ -204,9 +205,9 @@ class TUI:
         menu_pad = 2 
         for i, item in enumerate(self.menu_items, 1):
             if i == self.menu_choice:
-                self.menu_window.addstr(i, menu_pad, "> %s" % item, curses.A_BOLD)
+                self.menu_window.addstr(i, menu_pad, "%s" % item, curses.A_STANDOUT)
             else:
-                self.menu_window.addstr(i, menu_pad, "  %s" % item)
+                self.menu_window.addstr(i, menu_pad, "%s" % item)
         # update windows
         self.menu_window.noutrefresh()
         # redraw the screen
