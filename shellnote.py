@@ -201,13 +201,17 @@ class TUI:
         curses.doupdate()
 
     def draw_menu_items(self):
-        self.menu_items = ["Add note", "Edit notes", "Browse notes", "Help"]
-        menu_pad = 2 
-        for i, item in enumerate(self.menu_items, 1):
+        # the key in the dict is the text of the menu item that appears
+        # the value is the character to be underlined
+        self.menu_items = {"Add note":1, "Edit notes":1, "Browse notes":1, "Help":1}
+        menu_pad = 2 # padding columns 
+        for i, (key, value) in enumerate(self.menu_items.items(), 1):
             if i == self.menu_choice:
-                self.menu_window.addstr(i, menu_pad, "%s" % item, curses.A_STANDOUT)
+                self.menu_window.addstr(i, menu_pad, "%s" % key, curses.A_STANDOUT)
+                self.menu_window.chgat(i, value+1, 1, curses.A_UNDERLINE | curses.A_STANDOUT)
             else:
-                self.menu_window.addstr(i, menu_pad, "%s" % item)
+                self.menu_window.addstr(i, menu_pad, "%s" % key)
+                self.menu_window.chgat(i, value+1, 1, curses.A_UNDERLINE)
         # update windows
         self.menu_window.noutrefresh()
         # redraw the screen
