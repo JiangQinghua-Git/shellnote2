@@ -120,6 +120,7 @@ class TUI:
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
+        self.stdscr.keypad(True)
         
         # check for color support, if so start colors
         if curses.has_colors():
@@ -138,41 +139,49 @@ class TUI:
         # the value is the character to be underlined
         self.menu_items = {
                 "Add note":1, 
-                "Edit notes":1, 
                 "Browse notes":1,
+                "Edit notes":1, 
                 "Change config":1,
                 "Help":1, 
                 "Quit":1}
-        #self.menu_funcs = [add_note, edit_note, browse_notes, self.draw_help_window] 
         self.menu_funcs = [
                 self.add_note_tui, 
-                self.launch_editor_tui, 
                 self.browse_notes,
+                self.launch_editor_tui, 
                 self.change_config,
                 self.draw_help_window, 
                 self.shutdown] 
 
         # BEGIN PROGRAM
-        #self.draw_main_window()
-        # draw menu starting at bottom y pos of logo
-        #self.draw_menu_window(self.y_logo)
-        #self.draw_menu_items()
         self.event_loop()
 
 
     def launch_editor_tui(self):
+        # TODO: fix bug where, after having exited the editor (vim) and returned to
+        # shellnote, screen is not cleared after issuing quit command 
         launch_editor()
-        #self.stdscr.noutrefresh()
-        #curses.doupdate()
-        self.shutdown()
+        self.stdscr.clear()
+        #self.stdscr.refresh()
+        #self.shutdown()
 
     def add_note_tui(self):
+        # TODO: popup a small window which takes user input and sends to add_note
         self.draw_dummy_window()
 
     def browse_notes(self):
+        # TODO: draw scrollable window with print of all notes 
+        # add top or bottom menu that can apply filters (date, tag)
         self.draw_dummy_window()
+        #pad = curses.newpad(2000,self.X-4)
+        #for y in range(0,1000):
+        #    for x in range(0,self.X-5):
+        #        pad.addstr(y, x, '10')
+        #pad.refresh(0,0, 1,2, self.Y-3,self.X-4)
+        #self.stdscr.getch()
 
     def change_config(self):
+        # TODO: make function look for config file, copy default one to user
+        # dir if it doesn't exist, then open it in editor
         self.draw_dummy_window()
 
     def draw_all(self):
@@ -222,8 +231,6 @@ class TUI:
 
     def launch_menu_choice(self, choice):
         self.menu_funcs[choice-1]()
-
-        
 
     def draw_help_window(self):
         height = 12
@@ -334,6 +341,7 @@ class TUI:
         # restore terminal settings and quit
         curses.nocbreak()
         curses.echo()
+        self.stdscr.keypad(False)
         curses.curs_set(1)
         curses.endwin()
 
