@@ -1,3 +1,4 @@
+**WORK IN PROGRESS**
 	         __         ____            __
 	   _____/ /_  ___  / / /___  ____  / /____
 	  / ___/ __ \/ _ \/ / / __ \/ __ \/ __/ _ \
@@ -5,8 +6,8 @@
 	/____/_/ /_/\___/_/_/_/ /_/\____/\__/\___/
 	 $ easy note-taking on the command line.
 
-**WORK IN PROGRESS**
+`shellnote` is a refresh of [shellnote-posix](https://github.com/mrtgst/shellnote-posix). It retains the same CLI features, but adds some more functionality:
 
-Easy note-taking on the command line. Now with a TUI! 
+* A terminal UI for interactively adding and browsing your notes
+* A #tagging feature for organizing your notes 
 
-`shellnote` is a refresh of [shellnote-posix](https://github.com/mrtgst/shellnote-posix), written in Python instead of POSIX-compliant shell script.
