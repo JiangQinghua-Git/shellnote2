@@ -12,3 +12,4 @@
 * A terminal UI for interactively adding and browsing your notes
 * A #tagging feature for organizing your notes 
 
+![](screenshot/tui.png)
