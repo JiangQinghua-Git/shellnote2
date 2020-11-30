@@ -11,7 +11,7 @@ from signal import signal, SIGINT, SIGTERM
 homedir = os.path.expanduser("~")
 configfile = "config.py"
 configpath = os.path.join(homedir, ".config", "shellnote", configfile)
-version_str = "0.1"
+version_str = "0.2.0"
 
 if os.path.exists(configpath):
     exec(open(configpath).read())
@@ -97,6 +97,7 @@ class CLI:
             with open(logpath, "r") as f:
                 txt = f.read()
             search_note(args.search, txt)
+
         # if no arguments provided, launch curses tui
         if not any(vars(args).values()):
             tui = TUI()
