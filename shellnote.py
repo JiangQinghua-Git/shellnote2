@@ -5,7 +5,6 @@ import os
 import sys
 from time import strftime
 from re import search
-import yaml
 import curses
 from signal import signal, SIGINT, SIGTERM
 
@@ -24,17 +23,17 @@ else:
 
 def add_note(text, quiet=False):
     entry_date = strftime("%Y-%m-%d")
-    entry_time = strftime("%H:%M:%S")
-    entry_id = hash(entry_date+entry_time) 
-    entry_tags = None
-    entry = [{"id": entry_id, "date": entry_date, "time": entry_time, 
-         "tags": entry_tags, "note": text}]
-    entry = yaml.dump(entry, sort_keys=False) # make yaml format
+    entry_time = strftime("%H:%M")
+    entry = entry_date + '\t' + entry_time + '\t' + text
     with open(logpath, "a") as file:
         file.write(entry + "\n")
     if not quiet:
         print(f"Added entry to {logpath}")
 
+def print_notes(logpath):
+    with open(logpath, "r") as f:
+        for i in f:
+                        print(i, end='')
 def search_note(search_term, txt):
     txt_split = txt.splitlines()
     indexes = []
@@ -84,11 +83,7 @@ class CLI:
             add_note(args.add, args.quiet)
         
         if args.print:
-            with open(logpath, "r") as f:
-                data = yaml.load(f, Loader=yaml.SafeLoader)
-            for i in range(len(data)):
-                print(data[i]['date'] + " " + data[i]['time'][0:5] + \
-                        '\t' + data[i]['note'])
+            print_notes(logpath)
     
         if args.edit:
             launch_editor()
@@ -98,8 +93,8 @@ class CLI:
             entry = add_note(text, args.quiet)
     
         if args.search:
-            with open(logpath, "r") as file:
-                txt = file.read()
+            with open(logpath, "r") as f:
+                txt = f.read()
             search_note(args.search, txt)
         # if no arguments provided, launch curses tui
         if not any(vars(args).values()):
