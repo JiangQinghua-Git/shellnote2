@@ -24,7 +24,7 @@ else:
 def add_note(text, quiet=False):
     entry_date = strftime("%Y-%m-%d")
     entry_time = strftime("%H:%M")
-    entry = entry_date + '\t' + entry_time + '\t' + text
+    entry = entry_date + delim + entry_time + delim + text
     with open(logpath, "a") as file:
         file.write(entry + "\n")
     if not quiet:
@@ -33,7 +33,8 @@ def add_note(text, quiet=False):
 def print_notes(logpath):
     with open(logpath, "r") as f:
         for i in f:
-                        print(i, end='')
+            print(i, end='')
+
 def search_note(search_term, txt):
     txt_split = txt.splitlines()
     indexes = []
